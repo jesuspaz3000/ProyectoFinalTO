@@ -21,3 +21,11 @@ void GameObject::paint(QPainter *painter) {
         break;
     }
 }
+
+// Actualiza la posición del GameObject
+void GameObject::updatePosition() {
+    if (!parentWidget) return;  // Verifica si hay un widget padre
+
+    int dx = (movingLeft ? -speed : speed);  // Calcula desplazamiento horizontal
+    rect.translate(dx, 0);  // Mueve el objeto horizontalmente
+}
