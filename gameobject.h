@@ -10,6 +10,7 @@ class GameObject: public QObject //Herencia pública de la clase QObject
 {
     Q_OBJECT //macro que brinda a la clase carácterísticas específicas de Qt
 public:
+    enum Shape { Square, Circle };  // Define formas posibles para el objeto
     GameObject();
 };
 
