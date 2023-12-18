@@ -15,7 +15,8 @@ public:
 
     virtual void paint(QPainter *painter);  // Método para pintar el objeto, a sobrescribir
     virtual void updatePosition();          // Método para actualizar posición, a sobrescribir
-    
+    QRect getRect() const { return rect; }  // Obtiene el rectángulo del objeto
+
 };
 
 #endif // GAMEOBJECT_H
