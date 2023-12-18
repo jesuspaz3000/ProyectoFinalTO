@@ -13,6 +13,8 @@ public:
     enum Shape { Square, Circle };  // Define formas posibles para el objeto
     GameObject(int x, int y, int size, Shape shape, QColor color, QObject *parent = nullptr);  // Constructor
 
+    virtual void paint(QPainter *painter);  // Método para pintar el objeto, a sobrescribir
+    
 };
 
 #endif // GAMEOBJECT_H
