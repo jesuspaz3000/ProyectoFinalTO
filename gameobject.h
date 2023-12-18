@@ -17,6 +17,13 @@ public:
     virtual void updatePosition();          // Método para actualizar posición, a sobrescribir
     QRect getRect() const { return rect; }  // Obtiene el rectángulo del objeto
 
+protected:
+    QWidget *parentWidget;  // Widget padre del objeto
+    QRect rect;             // Rectángulo que define posición y tamaño
+    Shape shape;            // Forma del objeto
+    QColor color;           // Color del objeto
+    bool movingLeft;        // Indica si se mueve hacia la izquierda
+    int speed;              // Velocidad de movimiento
 };
 
 #endif // GAMEOBJECT_H
