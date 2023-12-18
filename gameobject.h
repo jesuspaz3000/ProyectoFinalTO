@@ -14,6 +14,7 @@ public:
     GameObject(int x, int y, int size, Shape shape, QColor color, QObject *parent = nullptr);  // Constructor
 
     virtual void paint(QPainter *painter);  // Método para pintar el objeto, a sobrescribir
+    virtual void updatePosition();          // Método para actualizar posición, a sobrescribir
     
 };
 
