@@ -5,42 +5,43 @@
 #include "fish.h"
 #include "trash.h"
 #include "ecosystem.h"
+#include "question.h"
+#include <QMessageBox>
 
 // Constructor de GameWindow: Configura la ventana del juego
 GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::GameWindow),
     playerPositioned(false), trashCollected(0), trashMissed(0) {
     ui->setupUi(this);
-    this->showMaximized();
+    this->showMaximized(); // Maximiza la ventana al inicio
 
-    player = new Player(this, -100, -100);
+    // Inicializa el jugador y los temporizadores
+    player = new Player(this, -100, -100); // Crea el jugador fuera de la pantalla
 
-    // Inicializa temporizador para generar peces
-    QTimer *fishTimer = new QTimer(this);
+    // Configuración de los temporizadores
+    fishTimer = new QTimer(this); // Temporizador para generar peces
     connect(fishTimer, &QTimer::timeout, this, &GameWindow::spawnFish);
-    fishTimer->start(1000);
+    fishTimer->start(1000); // Inicia el temporizador con un intervalo de 1 segundo
 
-    // Inicializa temporizador para generar basura
-    QTimer *trashTimer = new QTimer(this);
+    trashTimer = new QTimer(this); // Temporizador para generar basura
     connect(trashTimer, &QTimer::timeout, this, &GameWindow::spawnTrash);
-    trashTimer->start(1000);
+    trashTimer->start(1000); // Inicia el temporizador con un intervalo de 1 segundo
 
-    // Temporizador para actualizar objetos de juego
-    QTimer *timer = new QTimer(this);
+    timer = new QTimer(this); // Temporizador general para actualizar objetos de juego
     connect(timer, &QTimer::timeout, this, &GameWindow::updateGameObjects);
-    timer->start(16);
+    timer->start(16); // Inicia el temporizador para actualizaciones rápidas (aproximadamente 60 FPS)
 
-    // Conexiones para actualizar y manejar colisiones
+    // Configuración de conexiones para actualizar y manejar colisiones
     connect(player, &Player::positionChanged, this, QOverload<>::of(&GameWindow::update));
     connect(player, &Player::collidedWithObject, this, &GameWindow::handleObjectCollision);
 
-    // Configuración de etiquetas de puntaje
-    labelTrashCollected = new QLabel(this);
-    labelTrashMissed = new QLabel(this);
-    labelTrashCollected->move(10, 15); // Posiciona etiqueta
-    labelTrashMissed->move(10, 35);    // Posiciona etiqueta
-    updateScore();
+    // Configuración de etiquetas para mostrar puntajes
+    labelTrashCollected = new QLabel(this); // Muestra la cantidad de basura recogida
+    labelTrashMissed = new QLabel(this); // Muestra la cantidad de basura perdida
+    labelTrashCollected->move(10, 15); // Posiciona las etiquetas
+    labelTrashMissed->move(10, 35);
+    updateScore(); // Actualiza el texto de las etiquetas
 
-    // Establece el tamaño y estilo de las etiquetas
+    // Configuración del estilo y visibilidad de las etiquetas
     labelTrashCollected->setMinimumWidth(200);
     labelTrashMissed->setMinimumWidth(200);
     labelTrashCollected->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -50,23 +51,67 @@ GameWindow::GameWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::GameWi
     labelTrashCollected->show();
     labelTrashMissed->show();
 
-    // Configuración del botón de cierre (sin establecer la geometría aqui)
+    // Configuración del botón de cierre
     closeButton = new QPushButton("cerrar", this);
     connect(closeButton, &QPushButton::clicked, this, &GameWindow::close);
-    closeButton->hide(); // Oculta el botón hasta que la ventana esté correctamente maximizada
+    closeButton->hide(); // Se muestra después de maximizar la ventana
+
+    // Inicializa el diálogo para mostrar información de peces
+    infoFishDialog = new InfoFish(this);
 }
 
-// Genera un nuevo pez en el juego
+void GameWindow::pauseGame() {
+    fishTimer->stop();
+    trashTimer->stop();
+    timer->stop(); // Detiene todos los temporizadores para pausar el juego
+}
+
+void GameWindow::resumeGame() {
+    fishTimer->start();
+    trashTimer->start();
+    timer->start(); // Reanuda todos los temporizadores para continuar el juego
+}
+
+// Genera un nuevo pez en el juego y lo añade a la lista de objetos de juego
 void GameWindow::spawnFish() {
     Fish *newFish = new Fish(this);
-    connect(newFish, &Fish::fishOutOfScreen, this, &GameWindow::handleFishOutOfScreen);
+    connect(newFish, &Fish::requestInfo, this, [this, newFish]() {
+        this->showFishInfo(newFish);
+    });
     gameObjects.append(newFish);
 }
 
-// Maneja el evento cuando un pez sale de la pantalla
+// Maneja el evento cuando un pez sale de la pantalla, eliminándolo de la lista y liberando memoria
 void GameWindow::handleFishOutOfScreen(Fish *fish) {
     gameObjects.removeOne(fish);
     fish->deleteLater();
+}
+
+void GameWindow::showFishInfo(Fish *fish) {
+    selectedFish = fish; // Almacena el pez seleccionado para mostrar su información
+
+    pauseGame(); // Pausa el juego antes de abrir el diálogo
+
+    question questionDialog(this, fish->getPixmap());
+    if (questionDialog.exec() == QDialog::Accepted) {
+        QString userAnswer = questionDialog.getUserAnswer(); // Obtiene la respuesta del usuario
+        bool isCorrect = userAnswer.compare(fish->getName(), Qt::CaseInsensitive) == 0;
+
+        // Muestra un mensaje informativo sobre la corrección de la respuesta
+        QMessageBox::information(this, "Respuesta",
+                                 isCorrect ? "¡Correcto!" : "Incorrecto. Inténtalo de nuevo.");
+
+        if (isCorrect) {
+            trashMissed = std::max(0, trashMissed - 1); // Reduce basura perdida si la respuesta es correcta
+            updateScore(); // Actualiza las etiquetas de puntaje
+        }
+
+        // Muestra información adicional sobre el pez
+        InfoFish infoFishDialog(this, fish->getPixmap(), fish->getName());
+        infoFishDialog.exec();
+    }
+
+    resumeGame(); // Reanuda el juego después de cerrar los diálogos
 }
 
 // Genera un nuevo objeto de basura en el juego
@@ -125,14 +170,27 @@ void GameWindow::updateGameObjects() {
 }
 
 // Maneja la colisión del jugador con otros objetos
-void GameWindow::handleObjectCollision(GameObject* object) {
+void GameWindow::handleObjectCollision(GameObject* object, bool isColliding) {
+    if (Fish* fish = dynamic_cast<Fish*>(object)) {
+        if (isColliding) {
+            fish->showInfoButton();  // Muestra el botón
+        } else {
+            fish->hideInfoButton();  // Oculta el botón
+        }
+    }
+
+    // Corregimos la condición para Trash
     if (Trash* trash = dynamic_cast<Trash*>(object)) {
-        trashCollected++;
-        updateScore();
-        gameObjects.removeOne(trash);
-        trash->deleteLater();
+        if (isColliding) {
+            // Si hay una colisión con la basura, la recoge
+            trashCollected++;
+            updateScore();
+            gameObjects.removeOne(trash);
+            trash->deleteLater();
+        }
     }
 }
+
 
 // Maneja el evento de visualización de la ventana
 void GameWindow::showEvent(QShowEvent *event) {
