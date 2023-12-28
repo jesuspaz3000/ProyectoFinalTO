@@ -40,11 +40,11 @@ void Player::updatePosition() {
 // Verifica colisiones con otros objetos del juego
 void Player::checkCollisions(const QList<GameObject*>& gameObjects) {
     for (GameObject* obj : gameObjects) {
-        if (obj->getRect().intersects(this->getRect())) {
-            emit collidedWithObject(obj);  // Emite señal de colisión
-        }
+        bool isCurrentlyColliding = obj->getRect().intersects(this->getRect());
+        emit collidedWithObject(obj, isCurrentlyColliding);
     }
 }
+
 
 // Métodos para iniciar y detener movimiento en diferentes direcciones
 void Player::moveLeft() { movingLeft = true; }
@@ -70,4 +70,3 @@ void Player::setRect(const QRect &newRect) {
 QPixmap Player::getPixmap() const {
     return pixmap;
 }
-
