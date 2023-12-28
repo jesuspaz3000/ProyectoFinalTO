@@ -30,7 +30,7 @@ public:
 
 signals:
     void positionChanged();  // Señal emitida cuando cambia la posición
-    void collidedWithObject(GameObject* obj);  // Señal emitida en colisión
+    void collidedWithObject(GameObject* obj, bool isColliding);  // Señal emitida en colisión
 
 private:
     QWidget *parentWidget;  // Widget padre del jugador
@@ -44,4 +44,5 @@ private:
 private slots:
     void updatePosition();  // Actualiza la posición del jugador
 };
+
 #endif // PLAYER_H
