@@ -7,14 +7,14 @@ class Trash : public GameObject {
     Q_OBJECT
 
 public:
-    explicit Trash(QObject *parent = nullptr, float scaleFactor = 1.3f);  // Constructor para el objeto Trash
-    void updatePosition() override;// Actualiza posición, sobrescribe método de GameObject
+    explicit Trash(QObject *parent = nullptr, float scaleFactor = 1.3f);  // Constructor modificado
+    void updatePosition() override;
 
 signals:
-    void trashOutOfScreen(Trash *trash);// Señal emitida cuando la basura sale de pantalla
+    void trashOutOfScreen(Trash *trash);
 
 private:
-    float scaleFactor; //factor de escala para el tamaño del objeto de basura
+    float scaleFactor;  // Factor de escala para el tamaño del objeto de basura
 };
 
 #endif // TRASH_H
