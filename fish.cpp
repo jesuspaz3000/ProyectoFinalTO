@@ -104,3 +104,6 @@ void Fish::infoButtonClicked() {
     }
     emit requestInfo(); // Emitir la señal una sola vez
 }
+
+
+

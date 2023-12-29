@@ -38,10 +38,10 @@ QString InfoFish::getFishDescription(const QString &fishName) {
         return "Pez agresivo con un pico largo y puntiagudo similar a una espada.";
     } else if (fishName == "piraña") {
         return "Pez de agua dulce conocido por sus dientes afilados y comportamiento depredador.";
-    } else if (fishName == "tiburon") {
-        return "Impresionante depredador marino, famoso por sus dientes afilados y gran velocidad.";
-    }
-    return "Información no disponible.";
+} else if (fishName == "tiburon") {
+    return "Impresionante depredador marino, famoso por sus dientes afilados y gran velocidad.";
+}
+return "Información no disponible.";
 }
 
 void InfoFish::setFishDescription(const QString &fishName) {

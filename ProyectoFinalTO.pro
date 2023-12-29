@@ -12,9 +12,11 @@ SOURCES += \
     ecosystem.cpp \
     fish.cpp \
     gameobject.cpp \
+    infofish.cpp \
     main.cpp \
     gamewindow.cpp \
     player.cpp \
+    question.cpp \
     start.cpp \
     trash.cpp
 
@@ -23,12 +25,16 @@ HEADERS += \
     fish.h \
     gameobject.h \
     gamewindow.h \
+    infofish.h \
     player.h \
+    question.h \
     start.h \
     trash.h
 
 FORMS += \
     gamewindow.ui \
+    infofish.ui \
+    question.ui \
     start.ui
 
 # Default rules for deployment.

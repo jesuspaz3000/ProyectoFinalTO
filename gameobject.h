@@ -4,14 +4,14 @@
 #include <QObject>
 #include <QRect>
 #include <QPainter>
-#include <QColor>
+#include <QPixmap>  // Asegúrate de incluir esto para QPixmap
 
-class GameObject: public QObject //Herencia pública de la clase QObject
-{
-    Q_OBJECT //macro que brinda a la clase carácterísticas específicas de Qt
+class GameObject : public QObject {
+    Q_OBJECT
+
 public:
-    enum Shape { Square, Circle };  // Define formas posibles para el objeto
-    GameObject(int x, int y, int size, Shape shape, QColor color, QObject *parent = nullptr);  // Constructor
+    // Actualiza el constructor para usar imágenes
+    GameObject(int x, int y, int size, const QString &imagePath, QObject *parent = nullptr);
 
     virtual void paint(QPainter *painter);  // Método para pintar el objeto, a sobrescribir
     virtual void updatePosition();          // Método para actualizar posición, a sobrescribir
@@ -20,8 +20,7 @@ public:
 protected:
     QWidget *parentWidget;  // Widget padre del objeto
     QRect rect;             // Rectángulo que define posición y tamaño
-    Shape shape;            // Forma del objeto
-    QColor color;           // Color del objeto
+    QPixmap pixmap;         // Imagen del objeto
     bool movingLeft;        // Indica si se mueve hacia la izquierda
     int speed;              // Velocidad de movimiento
 };

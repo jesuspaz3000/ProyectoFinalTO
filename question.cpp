@@ -7,7 +7,7 @@ question::question(QWidget *parent, const QPixmap &fishPixmap)
     ui->setupUi(this);
 
     if (!fishPixmap.isNull()) {
-        QLabel *imagenPez = ui->imagenPez; 
+        QLabel *imagenPez = ui->imagenPez; // Asegúrate de usar el nombre correcto del QLabel
         if (imagenPez) {
             // Escala la imagen a un % del tamaño del QLabel
             QSize newSize = imagenPez->size() * 3;
