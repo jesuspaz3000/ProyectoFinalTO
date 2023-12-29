@@ -3,5 +3,17 @@
         <file>images/SubmarinoRobotico.png</file>
         <file>images/ecosystem.png</file>
         <file>images/Mar.png</file>
+        <file>images/ayuda.png</file>
+        <file>images/ayuda2.png</file>
+        <file>images/ballena.png</file>
+        <file>images/basura.png</file>
+        <file>images/configuracion.png</file>
+        <file>images/configuraciones.png</file>
+        <file>images/delfin.png</file>
+        <file>images/pez.png</file>
+        <file>images/pezEspada.png</file>
+        <file>images/salida.png</file>
+        <file>images/salida1.png</file>
+        <file>images/tiburon.png</file>
     </qresource>
 </RCC>
