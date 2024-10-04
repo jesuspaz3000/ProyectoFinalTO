@@ -10,3 +10,5 @@ int main(int argc, char *argv[]) {
 
     return a.exec();  // Entra en el bucle principal de eventos de Qt
 }
+
+//probando repositorio... xd
